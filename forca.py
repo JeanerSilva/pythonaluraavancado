@@ -6,6 +6,7 @@ def jogar():
     palavra_secreta = carrega_palavra_secreta()
 
     letras_acertadas = inicializa_letras_acertadas(palavra_secreta)
+    letras_erradas = []
     print(letras_acertadas)
 
     enforcou = False
@@ -14,18 +15,24 @@ def jogar():
 
     while(not enforcou and not acertou):
 
-        chute = pede_chute()
-
-        if(chute in palavra_secreta):
-            marca_chute_correto(chute, letras_acertadas, palavra_secreta)
+        chute = pede_chute(letras_erradas)
+        if chute not in letras_acertadas:
+            if chute in palavra_secreta:
+                marca_chute_correto(chute, letras_acertadas, palavra_secreta)
+            else:
+                if (chute not in letras_erradas):
+                    letras_erradas.append(chute)
+                    erros += 1
+                    desenha_forca(erros)
+                else:
+                    print("Você já chutou essa letra. Tente outra.")
         else:
-            erros += 1
-            desenha_forca(erros)
+            print("Você já acertou essa letra.")
 
         enforcou = erros == 7
         acertou = "_" not in letras_acertadas
 
-        print(letras_acertadas)
+        print(letras_acertadas, "\n\n\n")
 
     if(acertou):
         imprime_mensagem_vencedor()
@@ -126,7 +133,9 @@ def marca_chute_correto(chute, letras_acertadas, palavra_secreta):
             letras_acertadas[index] = letra
         index += 1
 
-def pede_chute():
+def pede_chute(letras_erradas):
+    print("******** NOVA TENTATIVA *****")
+    print("Letras já chutadas:", letras_erradas)
     chute = input("Qual letra? ")
     chute = chute.strip().upper()
     return chute
